@@ -52,7 +52,7 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
 fun daysInMonth(month: Int, year: Int): Int {
     var isLeap = 0
     if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0))
-        isLeap = 1;
+        isLeap = 1
     return when (month) {
         1 -> 31
         2 -> 28 + isLeap
@@ -112,10 +112,12 @@ fun min3(a: Int, b: Int, c: Int): Int {
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
+    val maxRS = max(r,s)
+    val minRS = min(r,s)
     return when {
-        (a * b <= r * s && max(a,b) <= max(r,s) && min(a,b) <= min(r,s)
-        || a * c <= r * s && max(a,c) <= max(r,s) && min(a,c) <= min(r,s)
-        || b * c <= r * s && max(b,c) <= max(r,s) && min(b,c) <= min(r,s)) -> true
+        (a * b <= r * s && max(a,b) <= maxRS && min(a,b) <= minRS
+        || a * c <= r * s && max(a,c) <= maxRS && min(a,c) <= minRS
+        || b * c <= r * s && max(b,c) <= maxRS && min(b,c) <= minRS) -> true
         else -> false
     }
 }
