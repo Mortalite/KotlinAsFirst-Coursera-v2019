@@ -155,6 +155,10 @@ class Tests {
             emptyList<String>(),
             whoAreInBoth(listOf("Marat", "Mikhail"), listOf("Sveta", "Kirill"))
         )
+        assertEquals(
+            emptyList<String>(),
+            whoAreInBoth(listOf(", "), listOf(""))
+        )
     }
 
     @Test
@@ -289,6 +293,18 @@ class Tests {
                     "Marat" to setOf("Mikhail", "Sveta"),
                     "Sveta" to setOf("Marat"),
                     "Mikhail" to setOf("Sveta")
+                )
+            )
+        )
+        assertEquals(
+            mapOf(
+                "0" to setOf("1"),
+                "1" to setOf("0")
+            ),
+            propagateHandshakes(
+                mapOf(
+                    "0" to setOf("1"),
+                    "1" to setOf("0")
                 )
             )
         )

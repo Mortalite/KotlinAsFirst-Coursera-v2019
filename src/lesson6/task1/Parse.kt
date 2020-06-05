@@ -2,6 +2,7 @@
 
 package lesson6.task1
 
+
 /**
  * Пример
  *
@@ -69,7 +70,60 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+
+fun daysInMonth(month: Int, year: Int): Int {
+    var isLeap = 0
+    if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0))
+        isLeap = 1
+    return when (month) {
+        1 -> 31
+        2 -> 28 + isLeap
+        3 -> 31
+        4 -> 30
+        5 -> 31
+        6 -> 30
+        7 -> 31
+        8 -> 31
+        9 -> 30
+        10 -> 31
+        11 -> 30
+        else -> 31
+    }
+}
+
+fun stringMonthToDigit(str: String): Int {
+    return when (str) {
+        "января" -> 1
+        "февраля" -> 2
+        "марта" -> 3
+        "апреля" -> 4
+        "мая" -> 5
+        "июня" -> 6
+        "июля" -> 7
+        "августа" -> 8
+        "сентября" -> 9
+        "октября" -> 10
+        "ноября" -> 11
+        "декабря" -> 12
+        else -> 0
+    }
+}
+
+fun dateStrToDigit(str: String): String {
+    val parts = str.split(" ")
+
+    if (parts.isEmpty() || parts.size != 3)
+        return ""
+
+    val day = parts[0].toIntOrNull()
+    val month = stringMonthToDigit(parts[1])
+    val year = parts[2].toIntOrNull()
+
+    if (day == null || year == null || day > daysInMonth(month, year) || month == 0)
+        return ""
+
+    return String.format("%02d.%02d.%d", day, month, year)
+}
 
 /**
  * Средняя
@@ -81,7 +135,43 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+
+fun digitMonthToStr(digit: Int): String {
+    return when (digit) {
+        1 -> "января"
+        2 -> "февраля"
+        3 -> "марта"
+        4 -> "апреля"
+        5 -> "мая"
+        6 -> "июня"
+        7 -> "июля"
+        8 -> "августа"
+        9 -> "сентября"
+        10 -> "октября"
+        11 -> "ноября"
+        12 -> "декабря"
+        else -> ""
+    }
+}
+
+fun dateDigitToStr(digital: String): String {
+    val parts = digital.split(".")
+    if (parts.isEmpty() || parts.size != 3)
+        return ""
+
+    for (part in parts)
+        if (part.toIntOrNull() == null)
+            return ""
+
+    val day = parts[0].toInt()
+    val month = digitMonthToStr(parts[1].toInt())
+    val year = parts[2].toInt()
+
+    if ("".equals(month) || day > daysInMonth(parts[1].toInt(), year))
+        return ""
+
+    return String.format("%d %s %d", day, month, year)
+}
 
 /**
  * Средняя
@@ -97,7 +187,13 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val result = Regex("[- ]").replace(phone, "")
+    if (result.matches(Regex("""^\+?\d*\({1}\d+\){1}\d*$""")) || result.matches(Regex("""^\+?\d*$""")))
+        return result.replace(Regex("[()]"), "")
+    else
+        return ""
+}
 
 /**
  * Средняя
@@ -109,7 +205,15 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int? {
+    if (!Regex("[0-9 %-]+").matches(jumps))
+        return -1
+
+    val MatchResult = Regex("([0-9]+)").findAll(jumps)
+    val result = MatchResult.maxBy { it -> it.value.toInt() }
+
+    return if (result == null) -1 else result.value.toInt()
+}
 
 /**
  * Сложная
@@ -122,7 +226,15 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    if (!Regex("[0-9 %+-]+").matches(jumps))
+        return -1
+
+    val MatchResult = Regex("([0-9]+)[ %-]*\\++").findAll(jumps)
+    val result = MatchResult.maxBy { it -> it.groupValues[1].toInt() }
+
+    return if (result == null) -1 else result.groupValues[1].toInt()
+}
 
 /**
  * Сложная
@@ -134,6 +246,27 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int = TODO()
+    //if (!Regex("[0-9]+[ +-]?[0-9]?\\{1,}").matches(expression))
+    //    return -1
+    //var MatchResult = Regex("([0-9]+)([-+]?)").findAll(expression)
+    //var tmp = -1
+    //for (elem in MatchResult)
+    //    println("elem = ${elem.groupValues}")
+    /*
+    for (elem in MatchResult)
+        tmp += elem.groupValues.drop(1).map { it.toInt() }.fold(0) {
+                previous, next -> previous + next
+        }
+     */
+    //println("tmp = ${tmp}")
+    //return tmp
+    /*
+    var MatchResult = Regex("([0-9]+)").findAll(expression)
+    var digitStack = MatchResult.map { it -> it.value.toInt() }
+    MatchResult = Regex("([+-]+)").findAll(expression)
+    var digitOperation = MatchResult
+    */
+
 
 /**
  * Сложная
@@ -157,7 +290,15 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val MatchResult = Regex("([а-яА-Яa-zA-Z]*) ([0-9.]+){1,}").findAll(description)
+    val result = MatchResult.maxBy { it -> it.groupValues[2].toDouble() }
+
+    if (result != null && result.groupValues[2].toDouble() >= 0.0)
+       return result.groupValues[1]
+
+    return ""
+}
 
 /**
  * Сложная
@@ -170,7 +311,32 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+
+fun romanCharToDigit(str: String): Int {
+    return when (str) {
+        "I" -> 1
+        "IV" -> 4
+        "V" -> 5
+        "IX" -> 9
+        "X" -> 10
+        "XL" -> 40
+        "L" -> 50
+        "XC" -> 90
+        "C" -> 100
+        "CD" -> 400
+        "D" -> 500
+        "CM" -> 900
+        "M" -> 1000
+        else -> -1
+    }
+}
+
+fun fromRoman(roman: String): Int {
+    if (!Regex("[IVXLCMD]+").matches(roman))
+        return -1
+
+    return Regex("(M|CM|D|CD|C|XC|L|XL|X|IX|V|IV|I)").findAll(roman).sumBy { romanCharToDigit(it.groupValues[1]) }
+}
 
 /**
  * Очень сложная

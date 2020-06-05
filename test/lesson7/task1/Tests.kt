@@ -60,6 +60,11 @@ Basic, Ruby, Swift.
     @Test
     @Tag("Normal")
     fun countSubstrings() {
+
+        assertEquals(
+            mapOf("ба" to 2),
+            countSubstrings("input/test.txt", listOf("ба", "ба"))
+        )
         assertEquals(
             mapOf("РАЗНЫЕ" to 2, "ные" to 2, "Неряшливость" to 1, "е" to 49, "эволюция" to 0),
             countSubstrings("input/substrings_in1.txt", listOf("РАЗНЫЕ", "ные", "Неряшливость", "е", "эволюция"))
@@ -101,6 +106,9 @@ Basic, Ruby, Swift.
     @Test
     @Tag("Normal")
     fun centerFile() {
+        centerFile("input/test.txt", "temp.txt")
+        assertFileContent("temp.txt", """аабб""")
+        File("temp.txt").delete()
         centerFile("input/center_in1.txt", "temp.txt")
         assertFileContent(
             "temp.txt",

@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.max
 
 /**
  * Пример
@@ -53,7 +54,18 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    var result = mutableMapOf<String, Int>()
+    var text = File(inputName).readLines().toString()
+
+    for (elem in substrings.distinct()) {
+        var pattern = if (elem.length == 1) "[${elem}]" else "(?=${elem})"
+        var count = Regex(pattern, RegexOption.IGNORE_CASE).findAll(text).count()
+        result.put(elem, result.getOrDefault(elem, 0) + count)
+    }
+
+    return result
+}
 
 
 /**
@@ -71,6 +83,14 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  */
 fun sibilants(inputName: String, outputName: String) {
     TODO()
+    /*
+    var lines = File(inputName).readLines().toString()
+    println(lines)
+    var tmp = Regex("([ж|ч|ш|щ][ы|я|ю])", RegexOption.IGNORE_CASE)
+    var result = lines.replace(tmp, "жи")
+    println(result)
+    File(outputName).bufferedWriter().write(result)
+    */
 }
 
 /**
@@ -91,7 +111,19 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    var text = File(inputName).readLines()
+    var output = File(outputName).bufferedWriter()
+    var maxLen = text.maxBy { it.trim().length }?.trim()?.length
+    if (maxLen != null) {
+        for (line in text) {
+            var trimLine = line.trim()
+            for (i in 0..(maxLen - trimLine.length) / 2 - 1)
+                output.write(" ")
+            output.write(trimLine)
+            output.newLine()
+        }
+    }
+    output.close()
 }
 
 /**
@@ -143,7 +175,25 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
-fun top20Words(inputName: String): Map<String, Int> = TODO()
+fun top20Words(inputName: String): Map<String, Int> {
+    var result = mutableMapOf<String, Int>()
+    var text = File(inputName).readLines()
+
+    for (line in text) {
+        var MatchResult = Regex("([а-яёА-ЯЁa-zA-Z]+)").findAll(line)
+        for (elem in MatchResult) {
+            for (index in 1..elem.groupValues.size - 1) {
+                result.put(elem.groupValues[index].toLowerCase(), result.getOrDefault(elem.groupValues[index].toLowerCase(), 0) + 1)
+            }
+        }
+    }
+
+    result = result.entries.sortedBy { it.value }.associate { it.toPair() }.toMutableMap()
+    while (result.size > 20)
+        result.remove(result.entries.first().key)
+    
+    return result
+}
 
 /**
  * Средняя
@@ -209,7 +259,33 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    var text = File(inputName).readLines()
+    var result = mutableMapOf<String, Int>()
+    var count = mutableListOf<String>()
+    for (line in text) {
+        var tmp = mutableMapOf<Char, Int>()
+        var isValid = true
+        for (ch in line) {
+            var value = tmp.getOrDefault(ch.toLowerCase(), 0)
+            if (value > 0) {
+                isValid = false
+                break
+            }
+            tmp.put(ch.toLowerCase(), value + 1)
+        }
+        if (isValid) {
+            count.add(line)
+            result.put(line, line.length)
+        }
+    }
+
+    var maxValue = result.maxBy { it.value }?.value
+    if (maxValue != null)
+        result.entries.removeIf { it -> maxValue > it.value }
+
+    var outputText = File(outputName).bufferedWriter()
+    outputText.write(count.filter { result.containsKey(it) }.joinToString())
+    outputText.close()
 }
 
 /**
@@ -260,6 +336,16 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     TODO()
 }
+    /*
+    var text = File(inputName).readLines()
+    println(text)
+    for (line in text) {
+        var MatchResult = Regex(".*\\*(\\w+)\\*.*").findAll(line)
+        for (elem in MatchResult)
+            println(elem.groupValues)
+    }
+    */
+
 
 /**
  * Сложная

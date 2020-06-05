@@ -115,14 +115,14 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = TODO()
+fun abs(v: List<Double>): Double = sqrt((v.map { it * it }).sum())
 
 /**
  * Простая
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
+fun mean(list: List<Double>): Double = if (list.size == 0) 0.0 else (list.sum() / list.size)
 
 /**
  * Средняя
@@ -132,117 +132,287 @@ fun mean(list: List<Double>): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    if (list.size == 0)
+        return list
+    else {
+        val mean = mean(list)
+        for (index in 0 until list.size)
+            list[index] -= mean
+        return list
+    }
+}
 
-/**
- * Средняя
- *
- * Найти скалярное произведение двух векторов равной размерности,
- * представленные в виде списков a и b. Скалярное произведение считать по формуле:
- * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
- */
-fun times(a: List<Int>, b: List<Int>): Int = TODO()
+    /**
+     * Средняя
+     *
+     * Найти скалярное произведение двух векторов равной размерности,
+     * представленные в виде списков a и b. Скалярное произведение считать по формуле:
+     * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
+     */
+    fun times(a: List<Int>, b: List<Int>): Int {
+        var sum = 0
+        for (i in 0 until a.size)
+            sum += a[i]*b[i]
+        return sum
+    }
 
-/**
- * Средняя
- *
- * Рассчитать значение многочлена при заданном x:
- * p(x) = p0 + p1*x + p2*x^2 + p3*x^3 + ... + pN*x^N.
- * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
- * Значение пустого многочлена равно 0 при любом x.
- */
-fun polynom(p: List<Int>, x: Int): Int = TODO()
+    /**
+     * Средняя
+     *
+     * Рассчитать значение многочлена при заданном x:
+     * p(x) = p0 + p1*x + p2*x^2 + p3*x^3 + ... + pN*x^N.
+     * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
+     * Значение пустого многочлена равно 0 при любом x.
+     */
+    fun polynom(p: List<Int>, x: Int): Int {
+        var sum = 0
+        var X = 1
+        for (i in 0 until p.size) {
+            sum += p[i] * X
+            X *= x
+        }
+        return sum
+    }
 
-/**
- * Средняя
- *
- * В заданном списке list каждый элемент, кроме первого, заменить
- * суммой данного элемента и всех предыдущих.
- * Например: 1, 2, 3, 4 -> 1, 3, 6, 10.
- * Пустой список не следует изменять. Вернуть изменённый список.
- *
- * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
- */
-fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
+    /**
+     * Средняя
+     *
+     * В заданном списке list каждый элемент, кроме первого, заменить
+     * суммой данного элемента и всех предыдущих.
+     * Например: 1, 2, 3, 4 -> 1, 3, 6, 10.
+     * Пустой список не следует изменять. Вернуть изменённый список.
+     *
+     * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
+     */
+    fun accumulate(list: MutableList<Int>): MutableList<Int> {
+        if (list.size != 0) {
+            var sum = list[0]
+            for (i in 1 until list.size) {
+                sum += list[i]
+                list[i] = sum
+            }
+        }
+        return list
+    }
 
-/**
- * Средняя
- *
- * Разложить заданное натуральное число n > 1 на простые множители.
- * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
- * Множители в списке должны располагаться по возрастанию.
- */
-fun factorize(n: Int): List<Int> = TODO()
+    /**
+     * Средняя
+     *
+     * Разложить заданное натуральное число n > 1 на простые множители.
+     * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
+     * Множители в списке должны располагаться по возрастанию.
+     */
+    fun factorize(n: Int): List<Int> {
+        var result = mutableListOf<Int>()
+        var N = n
+        var i = 2
+        while (N > 1) {
+            if (N % i == 0) {
+                result.add(i)
+                N /= i
+            }
+            else
+                i++
+        }
+        return result
+    }
 
-/**
- * Сложная
- *
- * Разложить заданное натуральное число n > 1 на простые множители.
- * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
- * Множители в результирующей строке должны располагаться по возрастанию.
- */
-fun factorizeToString(n: Int): String = TODO()
+    /**
+     * Сложная
+     *
+     * Разложить заданное натуральное число n > 1 на простые множители.
+     * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
+     * Множители в результирующей строке должны располагаться по возрастанию.
+     */
+    fun factorizeToString(n: Int): String = (factorize(n).joinToString(separator = "*"))
 
-/**
- * Средняя
- *
- * Перевести заданное целое число n >= 0 в систему счисления с основанием base > 1.
- * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
- * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
- */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+    /**
+     * Средняя
+     *
+     * Перевести заданное целое число n >= 0 в систему счисления с основанием base > 1.
+     * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
+     * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
+     */
+    fun convert(n: Int, base: Int): List<Int> {
+        var result = mutableListOf<Int>()
+        if (n != 0) {
+            var N = n
+            while (N != 0) {
+                result.add(0, N % base)
+                N /= base
+            }
+        }
+        else
+            result.add(0)
+        return result
+    }
 
-/**
- * Сложная
- *
- * Перевести заданное целое число n >= 0 в систему счисления с основанием 1 < base < 37.
- * Результат перевода вернуть в виде строки, цифры более 9 представлять латинскими
- * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
- * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
- *
- * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
- * (например, n.toString(base) и подобные), запрещается.
- */
-fun convertToString(n: Int, base: Int): String = TODO()
+    /**
+     * Сложная
+     *
+     * Перевести заданное целое число n >= 0 в систему счисления с основанием 1 < base < 37.
+     * Результат перевода вернуть в виде строки, цифры более 9 представлять латинскими
+     * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
+     * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
+     *
+     * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
+     * (например, n.toString(base) и подобные), запрещается.
+     */
+    fun convertToString(n: Int, base: Int): String {
+        var result = ""
+        if (n != 0) {
+            var N = n
+            while (N != 0) {
+                var tmp = N % base
+                if (tmp > 9)
+                    result += (tmp + 87).toChar()
+                else
+                    result += tmp
+                N /= base
+            }
+        }
+        else
+            result += "0"
+        return result.reversed()
+    }
 
-/**
- * Средняя
- *
- * Перевести число, представленное списком цифр digits от старшей к младшей,
- * из системы счисления с основанием base в десятичную.
- * Например: digits = (1, 3, 12), base = 14 -> 250
- */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
 
-/**
- * Сложная
- *
- * Перевести число, представленное цифровой строкой str,
- * из системы счисления с основанием base в десятичную.
- * Цифры более 9 представляются латинскими строчными буквами:
- * 10 -> a, 11 -> b, 12 -> c и так далее.
- * Например: str = "13c", base = 14 -> 250
- *
- * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
- * (например, str.toInt(base)), запрещается.
- */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+    fun power(n: Int, power: Int): Int {
+        var result = 1
+        var base = n
+        var exp = power
+        while (true)
+        {
+            if (exp % 2 == 1)
+                result *= base
+            exp /= 2
+            if (exp == 0)
+                break
+            base *= base
+        }
+        return result
+    }
+    /**
+     * Средняя
+     *
+     * Перевести число, представленное списком цифр digits от старшей к младшей,
+     * из системы счисления с основанием base в десятичную.
+     * Например: digits = (1, 3, 12), base = 14 -> 250
+     */
+    fun decimal(digits: List<Int>, base: Int): Int {
+        var result = 0
+        for (i in 0 until digits.size) {
+            result += digits[i] * power(base, digits.size - i - 1)
+        }
+        return result
+    }
 
-/**
- * Сложная
- *
- * Перевести натуральное число n > 0 в римскую систему.
- * Римские цифры: 1 = I, 4 = IV, 5 = V, 9 = IX, 10 = X, 40 = XL, 50 = L,
- * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
- * Например: 23 = XXIII, 44 = XLIV, 100 = C
- */
-fun roman(n: Int): String = TODO()
+    /**
+     * Сложная
+     *
+     * Перевести число, представленное цифровой строкой str,
+     * из системы счисления с основанием base в десятичную.
+     * Цифры более 9 представляются латинскими строчными буквами:
+     * 10 -> a, 11 -> b, 12 -> c и так далее.
+     * Например: str = "13c", base = 14 -> 250
+     *
+     * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
+     * (например, str.toInt(base)), запрещается.
+     */
+    fun decimalFromString(str: String, base: Int): Int {
+        var result = 0
+        for (i in 0 until str.length) {
+            var tmp = str[i]
+            if (tmp >= '0' && tmp <= '9')
+                result += (tmp - '0') * power(base, str.length - i - 1)
+            else if (tmp >= 'a' && tmp <= 'z')
+                result += (tmp - 'a' + 10) * power(base, str.length - i - 1)
+        }
+        return result
+    }
 
-/**
- * Очень сложная
- *
- * Записать заданное натуральное число 1..999999 прописью по-русски.
- * Например, 375 = "триста семьдесят пять",
- * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
- */
-fun russian(n: Int): String = TODO()
+    /**
+     * Сложная
+     *
+     * Перевести натуральное число n > 0 в римскую систему.
+     * Римские цифры: 1 = I, 4 = IV, 5 = V, 9 = IX, 10 = X, 40 = XL, 50 = L,
+     * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
+     * Например: 23 = XXIII, 44 = XLIV, 100 = C
+     */
+
+    fun createStr(count: Int, value: String): String {
+        var result = ""
+        for (i in 0 until count)
+            result += value
+        return result
+    }
+
+    fun roman(n: Int): String {
+        var result = ""
+        var tmp = n
+        while (tmp > 0) {
+            if (tmp / 1000 != 0) {
+                result += createStr(tmp / 1000, "M")
+                tmp %= 1000
+            }
+            else if (tmp / 900 != 0) {
+                result += createStr(tmp / 900, "CM")
+                tmp %= 900
+            }
+            else if (tmp / 500 != 0) {
+                result += createStr(tmp / 500, "D")
+                tmp %= 500
+            }
+            else if (tmp / 400 != 0) {
+                result += createStr(tmp / 400, "CD")
+                tmp %= 400
+            }
+            else if (tmp / 100 != 0) {
+                result += createStr(tmp / 100, "C")
+                tmp %= 100
+            }
+            else if (tmp / 90 != 0) {
+                result += createStr(tmp / 90, "XC")
+                tmp %= 90
+            }
+            else if (tmp / 50 != 0) {
+                result += createStr(tmp / 50, "L")
+                tmp %= 50
+            }
+            else if (tmp / 40 != 0) {
+                result += createStr(tmp / 40, "XL")
+                tmp %= 40
+            }
+            else if (tmp / 10 != 0) {
+                result += createStr(tmp / 10, "X")
+                tmp %= 10
+            }
+            else if (tmp / 9 != 0) {
+                result += createStr(tmp / 9, "IX")
+                tmp %= 9
+            }
+            else if (tmp / 5 != 0) {
+                result += createStr(tmp / 5, "V")
+                tmp %= 5
+            }
+            else if (tmp / 4 != 0) {
+                result += createStr(tmp / 4, "IV")
+                tmp %= 4
+            }
+            else if (tmp / 1 != 0) {
+                result += createStr(tmp / 1, "I")
+                tmp %= 1
+            }
+        }
+        return result
+    }
+
+    /**
+     * Очень сложная
+     *
+     * Записать заданное натуральное число 1..999999 прописью по-русски.
+     * Например, 375 = "триста семьдесят пять",
+     * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
+     */
+    fun russian(n: Int): String = TODO()
